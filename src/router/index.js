@@ -15,15 +15,6 @@ const routes = [
         }
     },
     {
-        path: "/module",
-        name: "module",
-        component: () =>
-            import ( /* webpackChunkName: "about" */ "../views/Module.vue"),
-        meta: {
-            title: "Модуль"
-        }
-    },
-    {
         path: "/login",
         name: "login",
         component: () =>
@@ -43,41 +34,23 @@ const routes = [
     },
     /*admin */
     {
-        path: "/courses",
-        name: "courses",
-        component: () =>
-            import ( /* webpackChunkName: "about" */ "../views/Courses.vue"),
-        meta: {
-            title: "Курсы"
-        }
-    },
-    {
-        path: "/courses/:pk/details",
-        name: "courses details",
-        component: () =>
-            import ( /* webpackChunkName: "about" */ "../views/CourseDetails.vue"),
-        meta: {
-            title: "Курсы"
-        }
-    },
-    {
         path: "/users",
         name: "users",
         component: () =>
             import ( /* webpackChunkName: "about" */ "../views/Users.vue"),
         meta: {
-            title: "Пользователи"
+            title: "Сотрудники"
         }
     },
     {
-        path: "/settings",
-        name: "settings",
+        path: "/tasks",
+        name: "users",
         component: () =>
-            import ( /* webpackChunkName: "about" */ "../views/Settings.vue"),
+            import ( /* webpackChunkName: "about" */ "../views/Tasks.vue"),
         meta: {
-            title: "Настройки"
+            title: "Задачи"
         }
-    }
+    },
 ];
 
 const router = new VueRouter({

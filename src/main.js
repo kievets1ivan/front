@@ -13,6 +13,12 @@ Vue.use(VueSession, { persist: true });
 Vue.prototype.$axios = axios;
 Vue.prototype.$hostname = "http://192.168.0.16:8000";
 
+Vue.directive('blur', {
+    inserted: function(el) {
+        el.onfocus = (ev) => ev.target.blur()
+    }
+});
+
 new Vue({
     router,
     store,

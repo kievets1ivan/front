@@ -1,235 +1,192 @@
 <template>
-  <v-container>
+  <v-container class="app-page">
     <!-- <v-row dense wrap>
      
     </v-row>-->
-    <v-row dense wrap justify="center" justify-lg="start" class="mb-5">
+     <v-row wrap dense>
       <v-col cols="12">
-        <!-- <v-btn flat exact to="/"><v-icon>arrow_back</v-icon>Недавно прослушанные</v-btn> -->
-        <router-link to="/test" class="app-link text-subtitle-2">
-          <span>Недавно прослушанные</span>
-          <v-icon small>mdi-chevron-right</v-icon>
-        </router-link>
+        <h3 class="title">Задачи</h3>
       </v-col>
-      <v-col cols="12" md="8" lg="auto" v-if="items.length === 0">
-        <v-skeleton-loader class="ma-3" type="image" height="125px" width="125px"></v-skeleton-loader>
+      <v-col cols="12" md="4">
+        <tasks-group 
+        class="my-3"
+        title='Беклог'
+        subtitle='Задачи которые нужно выполнить'
+        :loading="isTasksLoading"
+        :data="newTasks"
+        @onEdit="onTaskEdit"
+         @onDelete="onTaskDelete"
+         @onChangeStatus="onChangeStatus"
+        />
       </v-col>
-      <v-col v-else v-for="(item, i) in items" :key="i" cols="12" md="8" lg="1">
-        <!-- <course-card :item="item" /> -->
-        <v-hover v-slot:default="{ hover }">
-          <div>
-            <v-card
-              style="height: 100%"
-              @click="currentPodcastId === item.id ? currentPodcastId = null : currentPodcastId = item.id"
-            >
-              <!-- <v-card> -->
-              <v-img
-                :src="item.image"
-                class="white--text align-end"
-                gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
-              >
-                <v-fade-transition>
-                  <div class="h-100">
-                    <v-btn 
-                        outlined
-                        x-small
-                        color="red"
-                        absolute
-                        top
-                        left
-                        style="top: 0px; left: 0px;"
-                        class="ml-1 mt-1"
-                    >
-                      Live
-                      </v-btn>
-                    <v-btn
-                      fab
-                      x-small
-                      color="white"
-                      class="ml-auto mr-1 mb-1 d-block"
-                      v-if="hover || item.id === currentPodcastId"
-                    >
-                      <v-icon v-if="item.id === currentPodcastId">mdi-pause</v-icon>
-                      <v-icon v-else>mdi-play</v-icon>
-                    </v-btn>
-                  </div>
-                </v-fade-transition>
-              </v-img>
-              <!-- <v-avatar class="d-none d-sm-block" size="125" tile>
-            <v-img v-if="item.image" :src="item.image"></v-img>
-            <v-btn icon color="pink">
-              <v-icon>mdi-heart</v-icon>
-            </v-btn>
-              </v-avatar>-->
-            </v-card>
-            <router-link to="/test" class="app-link mt-1">
-              <span
-                class="text-subtitle-2 text-no-wrap opacity-0"
-                :class="{'opacity-1':hover}"
-              >{{item.title}}</span>
-            </router-link>
-            <router-link :to="`author/${item.artist}`" class="app-link">
-              <span
-                class="text-body-2 text-caption opacity-0"
-                :class="{'opacity-1':hover}"
-              >{{item.artist}}</span>
-            </router-link>
-          </div>
-        </v-hover>
+      <v-col cols="12" md="4">
+        <tasks-group 
+        class="my-3"
+        title='В процессе'
+        subtitle='Задачи которые выполняются'
+        :loading="isTasksLoading"
+        :data="currentTasks"
+        @onEdit="onTaskEdit"
+         @onDelete="onTaskDelete"
+         @onChangeStatus="onChangeStatus"
+        />
+      </v-col>
+       <v-col cols="12" md="4">
+        <tasks-group 
+        class="my-3"
+        title='Выполненные задачи'
+        subtitle='Задачи которые успешно выполнены'
+        :loading="isTasksLoading"
+        :data="completedTasks"
+         @onEdit="onTaskEdit"
+        @onDelete="onTaskDelete"
+        @onChangeStatus="onChangeStatus"
+        />
       </v-col>
     </v-row>
+    <v-row dense wrap>
+      <!-- <v-col cols="12" md="5">
+        <h3 class="title">Просмотренные</h3>
+        <v-card class="pt-4" outlined>
+          <v-sheet
+            class="v-sheet--offset mx-auto"
+            color="cyan"
+            max-width="calc(100% - 32px)"
+          >
+            <v-sparkline
+              :labels="labels"
+              :value="value"
+              color="white"
+              line-width="2"
+              padding="16"
+            ></v-sparkline>
+          </v-sheet>
 
-    <!-- <v-row dense wrap justify="center" justify-lg="start" class="mb-5">
-      <v-col cols="12">
-        <h3 class="title">Рекомендуем послушать</h3>
-      </v-col>
-      <v-col cols="12" md="8" lg="6" v-if="items.length === 0">
-        <v-card style="height: 100%;" outlined>
-          <div class="d-flex flex-no-wrap justify-space-between">
-            <div style="width: 100%">
-              <v-skeleton-loader type="article"></v-skeleton-loader>
+          <v-card-text class="pt-0">
+            <div class="title font-weight-light mb-2">User Registrations</div>
+            <div class="subheading font-weight-light grey--text">
+              Last Campaign Performance
             </div>
-            <div>
-              <v-skeleton-loader class="ma-3" type="image" height="125px" width="125px"></v-skeleton-loader>
-            </div>
-          </div>
+            <v-divider class="my-2"></v-divider>
+            <v-icon class="mr-2" small> mdi-clock </v-icon>
+            <span class="caption grey--text font-weight-light"
+              >last registration 26 minutes ago</span
+            >
+          </v-card-text>
         </v-card>
-      </v-col>
-      <v-col v-else v-for="(item, i) in items" :key="i" cols="12" md="8" lg="6">
-        <course-card :item="item" />
-      </v-col>
-    </v-row>-->
-
-    <!-- <v-row wrap dense>
+      </v-col> -->
       <v-col cols="12">
-        <h3 class="title">Ваши задания</h3>
-      </v-col>
-      <v-col cols="12">
-        <v-card outlined>
-          <v-list two-line subheader>
-            <v-subheader inset>Folders</v-subheader>
-
-            <v-list-item v-for="item in list" :key="item.title" @click=''>
+        <h3 class="title">Сотрудники</h3>
+        <v-card outlined :loading="isEployeesLoading" max-height="300">
+          <v-list>
+            <v-list-item v-for="item in employees" :key="item.id" @click dense>
               <v-list-item-avatar>
-                <v-icon :class="[item.iconClass]" v-text="item.icon"></v-icon>
+                <v-avatar color="primary" size="32">
+                  <span class="white--text caption">
+                    {{`${item.firstName.slice(0,1)}${item.lastName.slice(0,1)}`}}
+                  </span>
+                </v-avatar>
               </v-list-item-avatar>
 
               <v-list-item-content>
-                <v-list-item-title v-text="item.title"></v-list-item-title>
-                <v-list-item-subtitle v-text="item.subtitle"></v-list-item-subtitle>
+                <v-list-item-title>
+                  {{ `${item.firstName} ${item.lastName}` }}
+                </v-list-item-title>
               </v-list-item-content>
-
-              <v-list-item-action>
-                <v-btn icon>
-                  <v-icon color="grey lighten-1">mdi-information</v-icon>
-                </v-btn>
-              </v-list-item-action>
-            </v-list-item>
-
-            <v-divider inset></v-divider>
-
-            <v-subheader inset>Files</v-subheader>
-
-            <v-list-item v-for="item in list2" :key="item.title" @click=''>
-              <v-list-item-avatar>
-                <v-icon :class="[item.iconClass]" v-text="item.icon"></v-icon>
-              </v-list-item-avatar>
-
-              <v-list-item-content>
-                <v-list-item-title v-text="item.title"></v-list-item-title>
-                <v-list-item-subtitle v-text="item.subtitle"></v-list-item-subtitle>
-              </v-list-item-content>
-
-              <v-list-item-action>
-                <v-btn icon>
-                  <v-icon color="grey lighten-1">mdi-information</v-icon>
-                </v-btn>
-              </v-list-item-action>
             </v-list-item>
           </v-list>
         </v-card>
       </v-col>
-    </v-row>-->
+    </v-row>
+   
   </v-container>
 </template>
 
 <script>
 // @ is an alias to /src
+
+import { mapState, mapActions } from "vuex";
+
+import {getRandomColor} from '../common/colors'
+
 import CourseCard from "@/components/CourseCard";
+import TasksGroup from "@/components/TasksGroup";
 
 export default {
   name: "home",
-  components: { CourseCard },
+  components: { CourseCard, TasksGroup },
   data() {
     return {
-      currentPodcastId: null,
-      list: [
+      // currentPodcastId: null,
+      labels: ["12am", "3am", "6am", "9am", "12pm", "3pm", "6pm", "9pm"],
+      value: [200, 675, 410, 390, 310, 460, 250, 240],
+      items: [
         {
-          icon: "folder",
-          iconClass: "grey lighten-1 white--text",
-          title: "Photos",
-          subtitle: "Jan 9, 2014"
+          active: true,
+          title: "Jason Oner",
+          avatar: "https://cdn.vuetifyjs.com/images/lists/1.jpg",
         },
         {
-          icon: "folder",
-          iconClass: "grey lighten-1 white--text",
-          title: "Recipes",
-          subtitle: "Jan 17, 2014"
+          active: true,
+          title: "Ranee Carlson",
+          avatar: "https://cdn.vuetifyjs.com/images/lists/2.jpg",
         },
         {
-          icon: "folder",
-          iconClass: "grey lighten-1 white--text",
-          title: "Work",
-          subtitle: "Jan 28, 2014"
-        }
+          title: "Cindy Baker",
+          avatar: "https://cdn.vuetifyjs.com/images/lists/3.jpg",
+        },
+        {
+          title: "Ali Connors",
+          avatar: "https://cdn.vuetifyjs.com/images/lists/4.jpg",
+        },
       ],
-      list2: [
-        {
-          icon: "assignment",
-          iconClass: "blue white--text",
-          title: "Vacation itinerary",
-          subtitle: "Jan 20, 2014"
-        },
-        {
-          icon: "call_to_action",
-          iconClass: "amber white--text",
-          title: "Kitchen remodel",
-          subtitle: "Jan 10, 2014"
-        }
-      ],
-      items: []
     };
   },
+  computed: {
+    ...mapState(["isEployeesLoading", "employees","isTasksLoading", "tasks"]),
+    newTasks(){
+      return this.tasks.filter(task=>!task.isStarted && !task.isFinished);
+    },
+    currentTasks(){
+      return this.tasks.filter(task=>task.isStarted && !task.isFinished);
+    },
+    completedTasks(){
+       return this.tasks.filter(task=>task.isFinished);
+    }
+  },
+  methods: {
+    ...mapActions(["loadEmployees","loadTasks","deleteTask","completeTask","showTaskModal"]),
+    onTaskDelete(id){
+      this.deleteTask(id);
+    },
+    onTaskEdit(id){
+      this.showTaskModal({id});
+    },
+    onChangeStatus(id,status){
+      console.log(id,status);
+      this.completeTask({id,status});
+    },
+    getRandomColor
+  },
   mounted() {
-    setTimeout(() => {
-      this.items = [
-        {
-          image: "https://cdn.vuetifyjs.com/images/cards/foster.jpg",
-          title: "Тем кто рано встает",
-          artist: "Миша",
-          id: 0
-        },
-        {
-          image: "https://cdn.vuetifyjs.com/images/cards/halcyon.png",
-          title: "Энергия солнца",
-          artist: "Миша",
-          id: 1
-        },
-        {
-          image: "https://cdn.vuetifyjs.com/images/cards/foster.jpg",
-          title: "5 минут до",
-          artist: "Илья",
-          id: 2
-        },
-        {
-          image: "https://cdn.vuetifyjs.com/images/cards/halcyon.png",
-          title: "Свежий ум",
-          artist: "Илья",
-          id: 3
-        }
-      ];
-    }, 500);
-  }
+    this.loadEmployees();
+    this.loadTasks();
+  },
+  // mounted() {
+  //   setTimeout(() => {
+  //     this.items = this.$store.getters.getRecentlyListened;
+  //   }, 500);
+  // }
 };
 </script>
 
+<style lang="scss">
+.podcast-item {
+  .theme--light.v-btn.v-btn--disabled:not(.v-btn--flat):not(.v-btn--text):not(.v-btn--outlined) {
+    background: #f5f5f5 !important;
+  }
+  .theme--light.v-btn.v-btn--disabled .v-icon {
+    color: initial !important;
+  }
+}
+</style>

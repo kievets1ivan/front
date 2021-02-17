@@ -1,26 +1,14 @@
 <template>
   <v-app :style="{background: $vuetify.theme.themes[theme].background}">
-    <v-snackbar v-model="snackbar" top :timeout="timeout">{{ 'text' }}</v-snackbar>
+    <task-modal 
+    v-model="isTaskModalShown"
+    />
+    <user-modal 
+    v-model="isEmployeeModalShown"
+    />
+    <!-- <v-snackbar v-model="snackbar" top :timeout="timeout">{{ text }}</v-snackbar> -->
     <v-app-bar extended extension-height="1" clipped-left app v-if="visible" flat>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-
-      <!-- <v-toolbar-title>PURE</v-toolbar-title> -->
-      <!-- <v-btn outlined fab small @click="$router.push('/home')" class="mx-3"> -->
-      <!-- <img :src="require('@/assets/images/logo.png')" height="30" width="auto" /> -->
-      <!-- </v-btn> -->
-      <!-- <v-toolbar-title>Курсы</v-toolbar-title> -->
-
-      <v-btn icon class="ml-auto">
-        <v-icon>mdi-magnify</v-icon>
-      </v-btn>
-
-      <v-btn icon>
-        <v-icon>mdi-filter</v-icon>
-      </v-btn>
-
-      <v-btn icon>
-        <v-icon>mdi-dots-vertical</v-icon>
-      </v-btn>
       <template #extension>
         <v-divider></v-divider>
       </template>
@@ -40,7 +28,7 @@
 
       <template v-slot:append>
         <div class="pa-2">
-          <v-btn block @click="logout">Выход</v-btn>
+          <v-btn text block class="text-none" @click="logout">Выход</v-btn>
         </div>
       </template>
     </v-navigation-drawer>
@@ -64,42 +52,30 @@
 }
 </style>
 <script lang='ts'>
+import {mapState, mapActions} from 'vuex';
+import Logger from "./components/Logger.vue";
+import TaskModal from '@/components/TaskModal.vue';
+import UserModal from '@/components/UserModal.vue';
 export default {
   name: "App",
-
+  components: {
+    Logger,
+    TaskModal,
+    UserModal
+  },
   data() {
     return {
       drawer: true,
       snackbar: true,
       timeout: 1500,
       items: [
-        { title: "Лента", icon: "mdi-bulletin-board", route: "/home" },
+        { title: "Дешборд", icon: "mdi-bulletin-board", route: "/home" },
+        { title: "Задания", icon: "mdi-file-outline", route: "/tasks" },
         {
-          title: "Подкасты",
-          icon: "mdi-folder-multiple-outline",
-          route: "/courses"
-        },
-        { title: "Задания", icon: "mdi-file-outline", route: "/leads" },
-        {
-          title: "Пользователи",
+          title: "Сотрудники",
           icon: "mdi-account-multiple-outline",
           route: "/users"
         },
-        {
-          title: "Платежи",
-          icon: "mdi-wallet-membership",
-          route: "/payments"
-        },
-        {
-          title: "Уведомления",
-          icon: "mdi-bell-outline",
-          route: "/notifications"
-        },
-        {
-          title: "Настройки",
-          icon: "mdi-settings-outline",
-          route: "/settings"
-        }
       ]
     };
   },
@@ -108,7 +84,8 @@ export default {
       this.$session.destroy();
       this.$axios.defaults.headers.common["Authorization"] = "";
       this.$router.push("/");
-    }
+    },
+    ...mapActions(['hideTaskModal','hideEmployeeModal'])
   },
   computed: {
     visible() {
@@ -118,12 +95,33 @@ export default {
     },
     theme() {
       return this.$vuetify.theme.dark ? "dark" : "light";
-    }
+    },
+    isTaskModalShown:{
+       get(){
+          return this.taskData && Object.keys(this.taskData).length
+        },
+        set(value){
+          if(!value){
+            this.hideTaskModal()
+          }
+        }
+    },
+    isEmployeeModalShown:{
+       get(){
+          return this.employeeData && Object.keys(this.employeeData).length
+        },
+        set(value){
+          if(!value){
+            this.hideEmployeeModal()
+          }
+        }
+    },
+    ...mapState(['taskData','employeeData'])
   },
   mounted() {
     if (this.$session.get("jwt")) {
       this.$axios.defaults.headers.common["Authorization"] =
-        "JWT " + this.$session.get("jwt");
+        "Bearer " + this.$session.get("jwt");
     }
     this.$axios.interceptors.response.use(
       response => {
@@ -140,17 +138,26 @@ export default {
     );
     // this.$axios.defaults.headers.common["Access-Control-Allow-Origin"] = "*";
     // this.$axios.defaults.credentials = "same-origin";
-  }
+  },
+  // beforeDestroy: function() {
+  //   window.removeEventListener("keydown", this.keyboardEventHandler);
+  // }
 };
 </script>
 
 <style lang="scss">
 .opacity-0 {
   opacity: 0;
-  transition: opacity .3s cubic-bezier(0.075, 0.82, 0.165, 1);
+  transition: opacity 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 .opacity-1 {
   opacity: 1;
+}
+.w-100 {
+  width: 100%;
+}
+.app-page {
+  padding-bottom: 60px;
 }
 .v-application .app-link {
   color: inherit;
@@ -162,5 +169,9 @@ export default {
       text-decoration: underline;
     }
   }
+}
+.v-card{
+  position: relative;
+  overflow: auto;
 }
 </style>
