@@ -1,6 +1,6 @@
 import axios from 'axios';
 // export const hostname = 'http://localhost:3000';
-export const hostname = 'http://be95832d47cc.ngrok.io/api';
+export const hostname = 'http://3dcb8fd1658e.ngrok.io/api';
 
 export const login = data => axios.post(`${hostname}/user/login`, data);
 
