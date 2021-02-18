@@ -3,5 +3,5 @@ module.exports = {
         "vuetify"
     ],
     publicPath: process.env.NODE_ENV === 'production' ?
-        '/vue-front-build/dist/' : '/',
+        'https://kievets1ivan.github.io/front/dist/' : '/',
 }
